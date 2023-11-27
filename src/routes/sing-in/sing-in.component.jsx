@@ -1,5 +1,5 @@
 import  { singInWithGooglePopup } from '../../utils/firebase/firebase.utils'
-
+import   SignUpForm from '../../components/sign-up-form/sign-up-form.component'
 const SingIn = () =>{
     const logGoogleUser = async() =>{
         const response = await singInWithGooglePopup();
@@ -9,6 +9,7 @@ const SingIn = () =>{
         <div>
             <h1>Sing in Page</h1>
            <button onClick={logGoogleUser}>Sing in with google Popup</button>
+           <SignUpForm/>
         </div>
     )
 }
