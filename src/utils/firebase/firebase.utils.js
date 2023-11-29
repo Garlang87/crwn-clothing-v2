@@ -1,5 +1,7 @@
 import {initializeApp} from 'firebase/app';
-import { getAuth, signInWithRedirect, signInWithPopup, signInWithEmailAndPassword,GoogleAuthProvider, createUserWithEmailAndPassword, signOut} from 'firebase/auth';
+import {  getAuth, signInWithPopup, 
+          signInWithEmailAndPassword,GoogleAuthProvider, 
+          createUserWithEmailAndPassword, signOut, onAuthStateChanged} from 'firebase/auth';
 import {getFirestore, doc, getDoc, setDoc} from 'firebase/firestore'
 
 // Your web app's Firebase configuration
@@ -69,3 +71,5 @@ const firebaseConfig = {
   }
 
   export const signOutUser = () => signOut(auth);
+
+  export const onAuthStateChangedListener = (callback) =>  onAuthStateChanged(auth, callback);
