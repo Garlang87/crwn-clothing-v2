@@ -2,7 +2,7 @@ import {initializeApp} from 'firebase/app';
 import {  getAuth, signInWithPopup, 
           signInWithEmailAndPassword,GoogleAuthProvider, 
           createUserWithEmailAndPassword, signOut, onAuthStateChanged} from 'firebase/auth';
-import {getFirestore, doc, getDoc, setDoc} from 'firebase/firestore'
+import {getFirestore, doc, getDoc, setDoc, collection, writeBatch} from 'firebase/firestore'
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -30,6 +30,17 @@ const firebaseConfig = {
   
   export const db = getFirestore();
   
+  export const addCollectionAndDocuments = async(collectionKey,objectsToAdd) =>{
+    const collectionRef = collection(db, collectionKey);
+    const batch = writeBatch(db);
+    
+    objectsToAdd.forEach((object)=>{
+      const docRef = doc(collectionRef, object.title.toLowerCase());
+      batch.set(docRef, object)
+    });
+    await batch.commit();
+  };
+
   export const createUserDocumentFromAuth = async (usrAuth, additionalInformation ={}) =>{
     if(!usrAuth){
       return;
@@ -52,7 +63,7 @@ const firebaseConfig = {
       }
     }
     return userDocRef; 
-  }
+  };
 
   export const createAuthUserWithEmailAndPassword = async (email, password) => {
     if(!email||!password){
@@ -60,7 +71,7 @@ const firebaseConfig = {
     }
     return await createUserWithEmailAndPassword(auth, email, password)
     
-  }
+  };
 
   export const signInAuthUserWithEmailAndPassword = async (email, password) => {
     if(!email||!password){
@@ -68,7 +79,7 @@ const firebaseConfig = {
     }
     return await signInWithEmailAndPassword(auth, email, password)
     
-  }
+  };
 
   export const signOutUser = () => signOut(auth);
 
