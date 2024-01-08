@@ -2,7 +2,8 @@ import {initializeApp} from 'firebase/app';
 import {  getAuth, signInWithPopup, 
           signInWithEmailAndPassword,GoogleAuthProvider, 
           createUserWithEmailAndPassword, signOut, onAuthStateChanged} from 'firebase/auth';
-import {getFirestore, doc, getDoc, setDoc, collection, writeBatch} from 'firebase/firestore'
+import {getFirestore, doc, getDoc, setDoc, collection, writeBatch,
+        query, getDocs} from 'firebase/firestore'
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -30,16 +31,29 @@ const firebaseConfig = {
   
   export const db = getFirestore();
   
-  export const addCollectionAndDocuments = async(collectionKey,objectsToAdd) =>{
+  export const addCollectionAndDocuments = async(collectionKey,objectsToAdd, field='title') =>{
     const collectionRef = collection(db, collectionKey);
     const batch = writeBatch(db);
     
     objectsToAdd.forEach((object)=>{
-      const docRef = doc(collectionRef, object.title.toLowerCase());
+      const docRef = doc(collectionRef, object[field].toLowerCase());
       batch.set(docRef, object)
     });
     await batch.commit();
   };
+
+  export const getCategoriesAndDocumets = async()=>{
+    const collectionRef = collection(db,'categories');
+    const q = query(collectionRef);
+
+    const querySnapshot = await getDocs(q);
+    const categoryMap = querySnapshot.docs.reduce((acc,docSnapshop)=>{
+      const {title,items} = docSnapshop.data();
+      acc[title.toLowerCase()] = items;
+      return acc;
+    },{})
+    return categoryMap;
+  }
 
   export const createUserDocumentFromAuth = async (usrAuth, additionalInformation ={}) =>{
     if(!usrAuth){
